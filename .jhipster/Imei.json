@@ -1,0 +1,25 @@
+{
+  "applications": "*",
+  "changelogDate": "20240706054356",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "imei",
+  "fields": [
+    {
+      "fieldName": "imeiNumber",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "ImeiStatus",
+      "fieldValues": "GRAY,WHITE,BLACK"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "Imei",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "service": "serviceClass"
+}

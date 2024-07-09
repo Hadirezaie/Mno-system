@@ -1,0 +1,34 @@
+{
+  "applications": "*",
+  "changelogDate": "20240706054357",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "sim_pairs",
+  "fields": [
+    {
+      "fieldName": "msisdn",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "imsi",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sent",
+      "fieldType": "Boolean"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": true,
+  "name": "SimPairs",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "imei",
+      "relationshipName": "imei",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceClass"
+}

@@ -1,0 +1,1 @@
+org.springframework.test.context.ContextCustomizerFactory = af.mcit.mnosystem.config.TestContainersSpringContextCustomizerFactory
