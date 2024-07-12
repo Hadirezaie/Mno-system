@@ -2,13 +2,25 @@ package af.mcit.mnosystem.service;
 
 import af.mcit.mnosystem.domain.SimPairs;
 import af.mcit.mnosystem.repository.SimPairsRepository;
+import af.mcit.mnosystem.service.criteria.SimPairsCriteria;
+import af.mcit.mnosystem.service.dto.SimPairsDTO;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+import tech.jhipster.service.filter.BooleanFilter;
+import tech.jhipster.service.filter.LongFilter;
+import tech.jhipster.web.util.HeaderUtil;
 
 /**
  * Service Implementation for managing {@link SimPairs}.
@@ -19,10 +31,20 @@ public class SimPairsService {
 
     private final Logger log = LoggerFactory.getLogger(SimPairsService.class);
 
-    private final SimPairsRepository simPairsRepository;
+    private static final String ENTITY_NAME = "simPairs";
 
-    public SimPairsService(SimPairsRepository simPairsRepository) {
+    private final SimPairsRepository simPairsRepository;
+    private final SimPairsQueryService simPairsQueryService;
+    private final CIRTokenService cirTokenService;
+
+    public SimPairsService(
+        SimPairsRepository simPairsRepository,
+        SimPairsQueryService simPairsQueryService,
+        CIRTokenService cirTokenService
+    ) {
         this.simPairsRepository = simPairsRepository;
+        this.simPairsQueryService = simPairsQueryService;
+        this.cirTokenService = cirTokenService;
     }
 
     /**
@@ -106,5 +128,37 @@ public class SimPairsService {
     public void delete(Long id) {
         log.debug("Request to delete SimPairs : {}", id);
         simPairsRepository.deleteById(id);
+    }
+
+    @Scheduled(fixedRate = 1000)
+    protected void sendPairedSimsToCIR() {
+        SimPairsCriteria simPairsCriteria = new SimPairsCriteria();
+        simPairsCriteria.setSent((BooleanFilter) new BooleanFilter().setEquals(false));
+        simPairsCriteria.setImeiId((LongFilter) new LongFilter().setSpecified(true));
+        List<SimPairs> simPairs = simPairsQueryService.findByCriteria(simPairsCriteria);
+        simPairs.forEach(pairs -> {
+            try {
+                SimPairsDTO simPairsDTO = new SimPairsDTO();
+                simPairsDTO.setImei(pairs.getImei().getImeiNumber());
+                simPairsDTO.setImsi(pairs.getImsi());
+                simPairsDTO.setMsisdn(pairs.getMsisdn());
+
+                String token = cirTokenService.getToken();
+                String url = "http://localhost:8080/api/sim-pair";
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", "Bearer " + token);
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<SimPairsDTO> request = new HttpEntity<SimPairsDTO>(simPairsDTO, headers);
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+                log.info("Call Sim Pairs API: {}", response.getBody());
+
+                pairs.setSent(true);
+
+                SimPairs result = simPairsRepository.save(pairs);
+            } catch (Exception e) {
+                log.error("{}", e.getMessage());
+            }
+        });
     }
 }
