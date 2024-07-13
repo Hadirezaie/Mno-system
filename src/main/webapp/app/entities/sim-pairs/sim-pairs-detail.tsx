@@ -37,11 +37,13 @@ export const SimPairsDetail = () => {
           </dt>
           <dd>{simPairsEntity.imsi}</dd>
           <dt>
+            <span id="imeiNumber">Imei Number</span>
+          </dt>
+          <dd>{simPairsEntity.imeiNumber}</dd>
+          <dt>
             <span id="sent">Sent</span>
           </dt>
           <dd>{simPairsEntity.sent ? 'true' : 'false'}</dd>
-          <dt>Imei</dt>
-          <dd>{simPairsEntity.imei ? simPairsEntity.imei.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/sim-pairs" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

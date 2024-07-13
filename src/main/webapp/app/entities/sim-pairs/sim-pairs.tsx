@@ -109,11 +109,11 @@ export const SimPairs = () => {
                 <th className="hand" onClick={sort('imsi')}>
                   Imsi <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand" onClick={sort('imeiNumber')}>
+                  Imei Number <FontAwesomeIcon icon="sort" />
+                </th>
                 <th className="hand" onClick={sort('sent')}>
                   Sent <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  Imei <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
@@ -128,8 +128,8 @@ export const SimPairs = () => {
                   </td>
                   <td>{simPairs.msisdn}</td>
                   <td>{simPairs.imsi}</td>
+                  <td>{simPairs.imeiNumber}</td>
                   <td>{simPairs.sent ? 'true' : 'false'}</td>
-                  <td>{simPairs.imei ? <Link to={`/imei/${simPairs.imei.id}`}>{simPairs.imei.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/sim-pairs/${simPairs.id}`} color="info" size="sm" data-cy="entityDetailsButton">

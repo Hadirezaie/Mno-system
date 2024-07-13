@@ -27,9 +27,9 @@ public class SimPairsCriteria implements Serializable, Criteria {
 
     private StringFilter imsi;
 
-    private BooleanFilter sent;
+    private LongFilter imeiNumber;
 
-    private LongFilter imeiId;
+    private BooleanFilter sent;
 
     private Boolean distinct;
 
@@ -39,8 +39,8 @@ public class SimPairsCriteria implements Serializable, Criteria {
         this.id = other.id == null ? null : other.id.copy();
         this.msisdn = other.msisdn == null ? null : other.msisdn.copy();
         this.imsi = other.imsi == null ? null : other.imsi.copy();
+        this.imeiNumber = other.imeiNumber == null ? null : other.imeiNumber.copy();
         this.sent = other.sent == null ? null : other.sent.copy();
-        this.imeiId = other.imeiId == null ? null : other.imeiId.copy();
         this.distinct = other.distinct;
     }
 
@@ -94,6 +94,21 @@ public class SimPairsCriteria implements Serializable, Criteria {
         this.imsi = imsi;
     }
 
+    public LongFilter getImeiNumber() {
+        return imeiNumber;
+    }
+
+    public LongFilter imeiNumber() {
+        if (imeiNumber == null) {
+            imeiNumber = new LongFilter();
+        }
+        return imeiNumber;
+    }
+
+    public void setImeiNumber(LongFilter imeiNumber) {
+        this.imeiNumber = imeiNumber;
+    }
+
     public BooleanFilter getSent() {
         return sent;
     }
@@ -107,21 +122,6 @@ public class SimPairsCriteria implements Serializable, Criteria {
 
     public void setSent(BooleanFilter sent) {
         this.sent = sent;
-    }
-
-    public LongFilter getImeiId() {
-        return imeiId;
-    }
-
-    public LongFilter imeiId() {
-        if (imeiId == null) {
-            imeiId = new LongFilter();
-        }
-        return imeiId;
-    }
-
-    public void setImeiId(LongFilter imeiId) {
-        this.imeiId = imeiId;
     }
 
     public Boolean getDistinct() {
@@ -145,15 +145,15 @@ public class SimPairsCriteria implements Serializable, Criteria {
             Objects.equals(id, that.id) &&
             Objects.equals(msisdn, that.msisdn) &&
             Objects.equals(imsi, that.imsi) &&
+            Objects.equals(imeiNumber, that.imeiNumber) &&
             Objects.equals(sent, that.sent) &&
-            Objects.equals(imeiId, that.imeiId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, msisdn, imsi, sent, imeiId, distinct);
+        return Objects.hash(id, msisdn, imsi, imeiNumber, sent, distinct);
     }
 
     // prettier-ignore
@@ -163,8 +163,8 @@ public class SimPairsCriteria implements Serializable, Criteria {
             (id != null ? "id=" + id + ", " : "") +
             (msisdn != null ? "msisdn=" + msisdn + ", " : "") +
             (imsi != null ? "imsi=" + imsi + ", " : "") +
+            (imeiNumber != null ? "imeiNumber=" + imeiNumber + ", " : "") +
             (sent != null ? "sent=" + sent + ", " : "") +
-            (imeiId != null ? "imeiId=" + imeiId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";
     }

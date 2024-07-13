@@ -8,8 +8,6 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IImei } from 'app/shared/model/imei.model';
-import { getEntities as getImeis } from 'app/entities/imei/imei.reducer';
 import { ISimPairs } from 'app/shared/model/sim-pairs.model';
 import { getEntity, updateEntity, createEntity, reset } from './sim-pairs.reducer';
 
@@ -21,7 +19,6 @@ export const SimPairsUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
-  const imeis = useAppSelector(state => state.imei.entities);
   const simPairsEntity = useAppSelector(state => state.simPairs.entity);
   const loading = useAppSelector(state => state.simPairs.loading);
   const updating = useAppSelector(state => state.simPairs.updating);
@@ -37,8 +34,6 @@ export const SimPairsUpdate = () => {
     } else {
       dispatch(getEntity(id));
     }
-
-    dispatch(getImeis({}));
   }, []);
 
   useEffect(() => {
@@ -51,7 +46,6 @@ export const SimPairsUpdate = () => {
     const entity = {
       ...simPairsEntity,
       ...values,
-      imei: imeis.find(it => it.id.toString() === values.imei.toString()),
     };
 
     if (isNew) {
@@ -66,7 +60,6 @@ export const SimPairsUpdate = () => {
       ? {}
       : {
           ...simPairsEntity,
-          imei: simPairsEntity?.imei?.id,
         };
 
   return (
@@ -87,17 +80,8 @@ export const SimPairsUpdate = () => {
               {!isNew ? <ValidatedField name="id" required readOnly id="sim-pairs-id" label="ID" validate={{ required: true }} /> : null}
               <ValidatedField label="Msisdn" id="sim-pairs-msisdn" name="msisdn" data-cy="msisdn" type="text" />
               <ValidatedField label="Imsi" id="sim-pairs-imsi" name="imsi" data-cy="imsi" type="text" />
+              <ValidatedField label="Imei Number" id="sim-pairs-imeiNumber" name="imeiNumber" data-cy="imeiNumber" type="text" />
               <ValidatedField label="Sent" id="sim-pairs-sent" name="sent" data-cy="sent" check type="checkbox" />
-              <ValidatedField id="sim-pairs-imei" name="imei" data-cy="imei" label="Imei" type="select">
-                <option value="" key="0" />
-                {imeis
-                  ? imeis.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/sim-pairs" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

@@ -12,13 +12,12 @@ enum ImeiStatus{
 entity SimPairs {
     msisdn String
     imsi  String
+    imeiNumber Long
     sent   Boolean
     
 }
 
 
-relationship ManyToOne {
-    SimPairs {imei} to Imei
-}
+
 filter *
 paginate * with pagination

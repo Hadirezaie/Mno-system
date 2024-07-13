@@ -91,14 +91,11 @@ public class SimPairsQueryService extends QueryService<SimPairs> {
             if (criteria.getImsi() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getImsi(), SimPairs_.imsi));
             }
+            if (criteria.getImeiNumber() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getImeiNumber(), SimPairs_.imeiNumber));
+            }
             if (criteria.getSent() != null) {
                 specification = specification.and(buildSpecification(criteria.getSent(), SimPairs_.sent));
-            }
-            if (criteria.getImeiId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(criteria.getImeiId(), root -> root.join(SimPairs_.imei, JoinType.LEFT).get(Imei_.id))
-                    );
             }
         }
         return specification;

@@ -25,11 +25,11 @@ public class SimPairs implements Serializable {
     @Column(name = "imsi")
     private String imsi;
 
+    @Column(name = "imei_number")
+    private Long imeiNumber;
+
     @Column(name = "sent")
     private Boolean sent;
-
-    @ManyToOne
-    private Imei imei;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -72,6 +72,19 @@ public class SimPairs implements Serializable {
         this.imsi = imsi;
     }
 
+    public Long getImeiNumber() {
+        return this.imeiNumber;
+    }
+
+    public SimPairs imeiNumber(Long imeiNumber) {
+        this.setImeiNumber(imeiNumber);
+        return this;
+    }
+
+    public void setImeiNumber(Long imeiNumber) {
+        this.imeiNumber = imeiNumber;
+    }
+
     public Boolean getSent() {
         return this.sent;
     }
@@ -83,19 +96,6 @@ public class SimPairs implements Serializable {
 
     public void setSent(Boolean sent) {
         this.sent = sent;
-    }
-
-    public Imei getImei() {
-        return this.imei;
-    }
-
-    public void setImei(Imei imei) {
-        this.imei = imei;
-    }
-
-    public SimPairs imei(Imei imei) {
-        this.setImei(imei);
-        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -124,6 +124,7 @@ public class SimPairs implements Serializable {
             "id=" + getId() +
             ", msisdn='" + getMsisdn() + "'" +
             ", imsi='" + getImsi() + "'" +
+            ", imeiNumber=" + getImeiNumber() +
             ", sent='" + getSent() + "'" +
             "}";
     }

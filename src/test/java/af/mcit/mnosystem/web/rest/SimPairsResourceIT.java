@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import af.mcit.mnosystem.IntegrationTest;
-import af.mcit.mnosystem.domain.Imei;
 import af.mcit.mnosystem.domain.SimPairs;
 import af.mcit.mnosystem.repository.SimPairsRepository;
 import af.mcit.mnosystem.service.criteria.SimPairsCriteria;
@@ -37,6 +36,10 @@ class SimPairsResourceIT {
     private static final String DEFAULT_IMSI = "AAAAAAAAAA";
     private static final String UPDATED_IMSI = "BBBBBBBBBB";
 
+    private static final Long DEFAULT_IMEI_NUMBER = 1L;
+    private static final Long UPDATED_IMEI_NUMBER = 2L;
+    private static final Long SMALLER_IMEI_NUMBER = 1L - 1L;
+
     private static final Boolean DEFAULT_SENT = false;
     private static final Boolean UPDATED_SENT = true;
 
@@ -64,7 +67,7 @@ class SimPairsResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static SimPairs createEntity(EntityManager em) {
-        SimPairs simPairs = new SimPairs().msisdn(DEFAULT_MSISDN).imsi(DEFAULT_IMSI).sent(DEFAULT_SENT);
+        SimPairs simPairs = new SimPairs().msisdn(DEFAULT_MSISDN).imsi(DEFAULT_IMSI).imeiNumber(DEFAULT_IMEI_NUMBER).sent(DEFAULT_SENT);
         return simPairs;
     }
 
@@ -75,7 +78,7 @@ class SimPairsResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static SimPairs createUpdatedEntity(EntityManager em) {
-        SimPairs simPairs = new SimPairs().msisdn(UPDATED_MSISDN).imsi(UPDATED_IMSI).sent(UPDATED_SENT);
+        SimPairs simPairs = new SimPairs().msisdn(UPDATED_MSISDN).imsi(UPDATED_IMSI).imeiNumber(UPDATED_IMEI_NUMBER).sent(UPDATED_SENT);
         return simPairs;
     }
 
@@ -99,6 +102,7 @@ class SimPairsResourceIT {
         SimPairs testSimPairs = simPairsList.get(simPairsList.size() - 1);
         assertThat(testSimPairs.getMsisdn()).isEqualTo(DEFAULT_MSISDN);
         assertThat(testSimPairs.getImsi()).isEqualTo(DEFAULT_IMSI);
+        assertThat(testSimPairs.getImeiNumber()).isEqualTo(DEFAULT_IMEI_NUMBER);
         assertThat(testSimPairs.getSent()).isEqualTo(DEFAULT_SENT);
     }
 
@@ -134,6 +138,7 @@ class SimPairsResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(simPairs.getId().intValue())))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(DEFAULT_MSISDN)))
             .andExpect(jsonPath("$.[*].imsi").value(hasItem(DEFAULT_IMSI)))
+            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER.intValue())))
             .andExpect(jsonPath("$.[*].sent").value(hasItem(DEFAULT_SENT.booleanValue())));
     }
 
@@ -151,6 +156,7 @@ class SimPairsResourceIT {
             .andExpect(jsonPath("$.id").value(simPairs.getId().intValue()))
             .andExpect(jsonPath("$.msisdn").value(DEFAULT_MSISDN))
             .andExpect(jsonPath("$.imsi").value(DEFAULT_IMSI))
+            .andExpect(jsonPath("$.imeiNumber").value(DEFAULT_IMEI_NUMBER.intValue()))
             .andExpect(jsonPath("$.sent").value(DEFAULT_SENT.booleanValue()));
     }
 
@@ -304,6 +310,97 @@ class SimPairsResourceIT {
 
     @Test
     @Transactional
+    void getAllSimPairsByImeiNumberIsEqualToSomething() throws Exception {
+        // Initialize the database
+        simPairsRepository.saveAndFlush(simPairs);
+
+        // Get all the simPairsList where imeiNumber equals to DEFAULT_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.equals=" + DEFAULT_IMEI_NUMBER);
+
+        // Get all the simPairsList where imeiNumber equals to UPDATED_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.equals=" + UPDATED_IMEI_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    void getAllSimPairsByImeiNumberIsInShouldWork() throws Exception {
+        // Initialize the database
+        simPairsRepository.saveAndFlush(simPairs);
+
+        // Get all the simPairsList where imeiNumber in DEFAULT_IMEI_NUMBER or UPDATED_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.in=" + DEFAULT_IMEI_NUMBER + "," + UPDATED_IMEI_NUMBER);
+
+        // Get all the simPairsList where imeiNumber equals to UPDATED_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.in=" + UPDATED_IMEI_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    void getAllSimPairsByImeiNumberIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        simPairsRepository.saveAndFlush(simPairs);
+
+        // Get all the simPairsList where imeiNumber is not null
+        defaultSimPairsShouldBeFound("imeiNumber.specified=true");
+
+        // Get all the simPairsList where imeiNumber is null
+        defaultSimPairsShouldNotBeFound("imeiNumber.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllSimPairsByImeiNumberIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        simPairsRepository.saveAndFlush(simPairs);
+
+        // Get all the simPairsList where imeiNumber is greater than or equal to DEFAULT_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.greaterThanOrEqual=" + DEFAULT_IMEI_NUMBER);
+
+        // Get all the simPairsList where imeiNumber is greater than or equal to UPDATED_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.greaterThanOrEqual=" + UPDATED_IMEI_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    void getAllSimPairsByImeiNumberIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        simPairsRepository.saveAndFlush(simPairs);
+
+        // Get all the simPairsList where imeiNumber is less than or equal to DEFAULT_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.lessThanOrEqual=" + DEFAULT_IMEI_NUMBER);
+
+        // Get all the simPairsList where imeiNumber is less than or equal to SMALLER_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.lessThanOrEqual=" + SMALLER_IMEI_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    void getAllSimPairsByImeiNumberIsLessThanSomething() throws Exception {
+        // Initialize the database
+        simPairsRepository.saveAndFlush(simPairs);
+
+        // Get all the simPairsList where imeiNumber is less than DEFAULT_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.lessThan=" + DEFAULT_IMEI_NUMBER);
+
+        // Get all the simPairsList where imeiNumber is less than UPDATED_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.lessThan=" + UPDATED_IMEI_NUMBER);
+    }
+
+    @Test
+    @Transactional
+    void getAllSimPairsByImeiNumberIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        simPairsRepository.saveAndFlush(simPairs);
+
+        // Get all the simPairsList where imeiNumber is greater than DEFAULT_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.greaterThan=" + DEFAULT_IMEI_NUMBER);
+
+        // Get all the simPairsList where imeiNumber is greater than SMALLER_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.greaterThan=" + SMALLER_IMEI_NUMBER);
+    }
+
+    @Test
+    @Transactional
     void getAllSimPairsBySentIsEqualToSomething() throws Exception {
         // Initialize the database
         simPairsRepository.saveAndFlush(simPairs);
@@ -341,29 +438,6 @@ class SimPairsResourceIT {
         defaultSimPairsShouldNotBeFound("sent.specified=false");
     }
 
-    @Test
-    @Transactional
-    void getAllSimPairsByImeiIsEqualToSomething() throws Exception {
-        Imei imei;
-        if (TestUtil.findAll(em, Imei.class).isEmpty()) {
-            simPairsRepository.saveAndFlush(simPairs);
-            imei = ImeiResourceIT.createEntity(em);
-        } else {
-            imei = TestUtil.findAll(em, Imei.class).get(0);
-        }
-        em.persist(imei);
-        em.flush();
-        simPairs.setImei(imei);
-        simPairsRepository.saveAndFlush(simPairs);
-        Long imeiId = imei.getId();
-
-        // Get all the simPairsList where imei equals to imeiId
-        defaultSimPairsShouldBeFound("imeiId.equals=" + imeiId);
-
-        // Get all the simPairsList where imei equals to (imeiId + 1)
-        defaultSimPairsShouldNotBeFound("imeiId.equals=" + (imeiId + 1));
-    }
-
     /**
      * Executes the search, and checks that the default entity is returned.
      */
@@ -375,6 +449,7 @@ class SimPairsResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(simPairs.getId().intValue())))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(DEFAULT_MSISDN)))
             .andExpect(jsonPath("$.[*].imsi").value(hasItem(DEFAULT_IMSI)))
+            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER.intValue())))
             .andExpect(jsonPath("$.[*].sent").value(hasItem(DEFAULT_SENT.booleanValue())));
 
         // Check, that the count call also returns 1
@@ -423,7 +498,7 @@ class SimPairsResourceIT {
         SimPairs updatedSimPairs = simPairsRepository.findById(simPairs.getId()).get();
         // Disconnect from session so that the updates on updatedSimPairs are not directly saved in db
         em.detach(updatedSimPairs);
-        updatedSimPairs.msisdn(UPDATED_MSISDN).imsi(UPDATED_IMSI).sent(UPDATED_SENT);
+        updatedSimPairs.msisdn(UPDATED_MSISDN).imsi(UPDATED_IMSI).imeiNumber(UPDATED_IMEI_NUMBER).sent(UPDATED_SENT);
 
         restSimPairsMockMvc
             .perform(
@@ -439,6 +514,7 @@ class SimPairsResourceIT {
         SimPairs testSimPairs = simPairsList.get(simPairsList.size() - 1);
         assertThat(testSimPairs.getMsisdn()).isEqualTo(UPDATED_MSISDN);
         assertThat(testSimPairs.getImsi()).isEqualTo(UPDATED_IMSI);
+        assertThat(testSimPairs.getImeiNumber()).isEqualTo(UPDATED_IMEI_NUMBER);
         assertThat(testSimPairs.getSent()).isEqualTo(UPDATED_SENT);
     }
 
@@ -510,7 +586,7 @@ class SimPairsResourceIT {
         SimPairs partialUpdatedSimPairs = new SimPairs();
         partialUpdatedSimPairs.setId(simPairs.getId());
 
-        partialUpdatedSimPairs.msisdn(UPDATED_MSISDN).sent(UPDATED_SENT);
+        partialUpdatedSimPairs.msisdn(UPDATED_MSISDN).imeiNumber(UPDATED_IMEI_NUMBER).sent(UPDATED_SENT);
 
         restSimPairsMockMvc
             .perform(
@@ -526,6 +602,7 @@ class SimPairsResourceIT {
         SimPairs testSimPairs = simPairsList.get(simPairsList.size() - 1);
         assertThat(testSimPairs.getMsisdn()).isEqualTo(UPDATED_MSISDN);
         assertThat(testSimPairs.getImsi()).isEqualTo(DEFAULT_IMSI);
+        assertThat(testSimPairs.getImeiNumber()).isEqualTo(UPDATED_IMEI_NUMBER);
         assertThat(testSimPairs.getSent()).isEqualTo(UPDATED_SENT);
     }
 
@@ -541,7 +618,7 @@ class SimPairsResourceIT {
         SimPairs partialUpdatedSimPairs = new SimPairs();
         partialUpdatedSimPairs.setId(simPairs.getId());
 
-        partialUpdatedSimPairs.msisdn(UPDATED_MSISDN).imsi(UPDATED_IMSI).sent(UPDATED_SENT);
+        partialUpdatedSimPairs.msisdn(UPDATED_MSISDN).imsi(UPDATED_IMSI).imeiNumber(UPDATED_IMEI_NUMBER).sent(UPDATED_SENT);
 
         restSimPairsMockMvc
             .perform(
@@ -557,6 +634,7 @@ class SimPairsResourceIT {
         SimPairs testSimPairs = simPairsList.get(simPairsList.size() - 1);
         assertThat(testSimPairs.getMsisdn()).isEqualTo(UPDATED_MSISDN);
         assertThat(testSimPairs.getImsi()).isEqualTo(UPDATED_IMSI);
+        assertThat(testSimPairs.getImeiNumber()).isEqualTo(UPDATED_IMEI_NUMBER);
         assertThat(testSimPairs.getSent()).isEqualTo(UPDATED_SENT);
     }
 
