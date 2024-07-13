@@ -31,9 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class ImeiResourceIT {
 
-    private static final Long DEFAULT_IMEI_NUMBER = 1L;
-    private static final Long UPDATED_IMEI_NUMBER = 2L;
-    private static final Long SMALLER_IMEI_NUMBER = 1L - 1L;
+    private static final String DEFAULT_IMEI_NUMBER = "AAAAAAAAAA";
+    private static final String UPDATED_IMEI_NUMBER = "BBBBBBBBBB";
 
     private static final ImeiStatus DEFAULT_STATUS = ImeiStatus.GRAY;
     private static final ImeiStatus UPDATED_STATUS = ImeiStatus.WHITE;
@@ -129,7 +128,7 @@ class ImeiResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(imei.getId().intValue())))
-            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER.intValue())))
+            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER)))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
 
@@ -145,7 +144,7 @@ class ImeiResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(imei.getId().intValue()))
-            .andExpect(jsonPath("$.imeiNumber").value(DEFAULT_IMEI_NUMBER.intValue()))
+            .andExpect(jsonPath("$.imeiNumber").value(DEFAULT_IMEI_NUMBER))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
     }
 
@@ -208,54 +207,28 @@ class ImeiResourceIT {
 
     @Test
     @Transactional
-    void getAllImeisByImeiNumberIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllImeisByImeiNumberContainsSomething() throws Exception {
         // Initialize the database
         imeiRepository.saveAndFlush(imei);
 
-        // Get all the imeiList where imeiNumber is greater than or equal to DEFAULT_IMEI_NUMBER
-        defaultImeiShouldBeFound("imeiNumber.greaterThanOrEqual=" + DEFAULT_IMEI_NUMBER);
+        // Get all the imeiList where imeiNumber contains DEFAULT_IMEI_NUMBER
+        defaultImeiShouldBeFound("imeiNumber.contains=" + DEFAULT_IMEI_NUMBER);
 
-        // Get all the imeiList where imeiNumber is greater than or equal to UPDATED_IMEI_NUMBER
-        defaultImeiShouldNotBeFound("imeiNumber.greaterThanOrEqual=" + UPDATED_IMEI_NUMBER);
+        // Get all the imeiList where imeiNumber contains UPDATED_IMEI_NUMBER
+        defaultImeiShouldNotBeFound("imeiNumber.contains=" + UPDATED_IMEI_NUMBER);
     }
 
     @Test
     @Transactional
-    void getAllImeisByImeiNumberIsLessThanOrEqualToSomething() throws Exception {
+    void getAllImeisByImeiNumberNotContainsSomething() throws Exception {
         // Initialize the database
         imeiRepository.saveAndFlush(imei);
 
-        // Get all the imeiList where imeiNumber is less than or equal to DEFAULT_IMEI_NUMBER
-        defaultImeiShouldBeFound("imeiNumber.lessThanOrEqual=" + DEFAULT_IMEI_NUMBER);
+        // Get all the imeiList where imeiNumber does not contain DEFAULT_IMEI_NUMBER
+        defaultImeiShouldNotBeFound("imeiNumber.doesNotContain=" + DEFAULT_IMEI_NUMBER);
 
-        // Get all the imeiList where imeiNumber is less than or equal to SMALLER_IMEI_NUMBER
-        defaultImeiShouldNotBeFound("imeiNumber.lessThanOrEqual=" + SMALLER_IMEI_NUMBER);
-    }
-
-    @Test
-    @Transactional
-    void getAllImeisByImeiNumberIsLessThanSomething() throws Exception {
-        // Initialize the database
-        imeiRepository.saveAndFlush(imei);
-
-        // Get all the imeiList where imeiNumber is less than DEFAULT_IMEI_NUMBER
-        defaultImeiShouldNotBeFound("imeiNumber.lessThan=" + DEFAULT_IMEI_NUMBER);
-
-        // Get all the imeiList where imeiNumber is less than UPDATED_IMEI_NUMBER
-        defaultImeiShouldBeFound("imeiNumber.lessThan=" + UPDATED_IMEI_NUMBER);
-    }
-
-    @Test
-    @Transactional
-    void getAllImeisByImeiNumberIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        imeiRepository.saveAndFlush(imei);
-
-        // Get all the imeiList where imeiNumber is greater than DEFAULT_IMEI_NUMBER
-        defaultImeiShouldNotBeFound("imeiNumber.greaterThan=" + DEFAULT_IMEI_NUMBER);
-
-        // Get all the imeiList where imeiNumber is greater than SMALLER_IMEI_NUMBER
-        defaultImeiShouldBeFound("imeiNumber.greaterThan=" + SMALLER_IMEI_NUMBER);
+        // Get all the imeiList where imeiNumber does not contain UPDATED_IMEI_NUMBER
+        defaultImeiShouldBeFound("imeiNumber.doesNotContain=" + UPDATED_IMEI_NUMBER);
     }
 
     @Test
@@ -306,7 +279,7 @@ class ImeiResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(imei.getId().intValue())))
-            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER.intValue())))
+            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER)))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
 
         // Check, that the count call also returns 1

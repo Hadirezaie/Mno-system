@@ -2,7 +2,7 @@ import { ImeiStatus } from 'app/shared/model/enumerations/imei-status.model';
 
 export interface IImei {
   id?: number;
-  imeiNumber?: number | null;
+  imeiNumber?: string | null;
   status?: ImeiStatus | null;
 }
 

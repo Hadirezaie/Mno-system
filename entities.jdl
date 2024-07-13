@@ -1,5 +1,5 @@
 entity Imei {
-    imeiNumber Long
+    imeiNumber String
     status ImeiStatus
 }
 
@@ -12,7 +12,7 @@ enum ImeiStatus{
 entity SimPairs {
     msisdn String
     imsi  String
-    imeiNumber Long
+    imeiNumber String
     sent   Boolean
     
 }

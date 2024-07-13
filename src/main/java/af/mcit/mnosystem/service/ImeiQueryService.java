@@ -1,11 +1,11 @@
 package af.mcit.mnosystem.service;
 
-// for static metamodels
+import af.mcit.mnosystem.domain.*; // for static metamodels
 import af.mcit.mnosystem.domain.Imei;
-import af.mcit.mnosystem.domain.Imei_;
 import af.mcit.mnosystem.repository.ImeiRepository;
 import af.mcit.mnosystem.service.criteria.ImeiCriteria;
 import java.util.List;
+import javax.persistence.criteria.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -16,13 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
 /**
- * Service for executing complex queries for {@link Imei} entities in the
- * database.
- * The main input is a {@link ImeiCriteria} which gets converted to
- * {@link Specification},
+ * Service for executing complex queries for {@link Imei} entities in the database.
+ * The main input is a {@link ImeiCriteria} which gets converted to {@link Specification},
  * in a way that all the filters must apply.
- * It returns a {@link List} of {@link Imei} or a {@link Page} of {@link Imei}
- * which fulfills the criteria.
+ * It returns a {@link List} of {@link Imei} or a {@link Page} of {@link Imei} which fulfills the criteria.
  */
 @Service
 @Transactional(readOnly = true)
@@ -37,11 +34,8 @@ public class ImeiQueryService extends QueryService<Imei> {
     }
 
     /**
-     * Return a {@link List} of {@link Imei} which matches the criteria from the
-     * database.
-     *
-     * @param criteria The object which holds all the filters, which the entities
-     *                 should match.
+     * Return a {@link List} of {@link Imei} which matches the criteria from the database.
+     * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
@@ -52,12 +46,9 @@ public class ImeiQueryService extends QueryService<Imei> {
     }
 
     /**
-     * Return a {@link Page} of {@link Imei} which matches the criteria from the
-     * database.
-     *
-     * @param criteria The object which holds all the filters, which the entities
-     *                 should match.
-     * @param page     The page, which should be returned.
+     * Return a {@link Page} of {@link Imei} which matches the criteria from the database.
+     * @param criteria The object which holds all the filters, which the entities should match.
+     * @param page The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
@@ -69,9 +60,7 @@ public class ImeiQueryService extends QueryService<Imei> {
 
     /**
      * Return the number of matching entities in the database.
-     *
-     * @param criteria The object which holds all the filters, which the entities
-     *                 should match.
+     * @param criteria The object which holds all the filters, which the entities should match.
      * @return the number of matching entities.
      */
     @Transactional(readOnly = true)
@@ -83,9 +72,7 @@ public class ImeiQueryService extends QueryService<Imei> {
 
     /**
      * Function to convert {@link ImeiCriteria} to a {@link Specification}
-     *
-     * @param criteria The object which holds all the filters, which the entities
-     *                 should match.
+     * @param criteria The object which holds all the filters, which the entities should match.
      * @return the matching {@link Specification} of the entity.
      */
     protected Specification<Imei> createSpecification(ImeiCriteria criteria) {
@@ -99,7 +86,7 @@ public class ImeiQueryService extends QueryService<Imei> {
                 specification = specification.and(buildRangeSpecification(criteria.getId(), Imei_.id));
             }
             if (criteria.getImeiNumber() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getImeiNumber(), Imei_.imeiNumber));
+                specification = specification.and(buildStringSpecification(criteria.getImeiNumber(), Imei_.imeiNumber));
             }
             if (criteria.getStatus() != null) {
                 specification = specification.and(buildSpecification(criteria.getStatus(), Imei_.status));

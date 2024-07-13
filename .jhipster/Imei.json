@@ -7,7 +7,7 @@
   "fields": [
     {
       "fieldName": "imeiNumber",
-      "fieldType": "Long"
+      "fieldType": "String"
     },
     {
       "fieldName": "status",

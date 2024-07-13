@@ -36,9 +36,8 @@ class SimPairsResourceIT {
     private static final String DEFAULT_IMSI = "AAAAAAAAAA";
     private static final String UPDATED_IMSI = "BBBBBBBBBB";
 
-    private static final Long DEFAULT_IMEI_NUMBER = 1L;
-    private static final Long UPDATED_IMEI_NUMBER = 2L;
-    private static final Long SMALLER_IMEI_NUMBER = 1L - 1L;
+    private static final String DEFAULT_IMEI_NUMBER = "AAAAAAAAAA";
+    private static final String UPDATED_IMEI_NUMBER = "BBBBBBBBBB";
 
     private static final Boolean DEFAULT_SENT = false;
     private static final Boolean UPDATED_SENT = true;
@@ -138,7 +137,7 @@ class SimPairsResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(simPairs.getId().intValue())))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(DEFAULT_MSISDN)))
             .andExpect(jsonPath("$.[*].imsi").value(hasItem(DEFAULT_IMSI)))
-            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER.intValue())))
+            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER)))
             .andExpect(jsonPath("$.[*].sent").value(hasItem(DEFAULT_SENT.booleanValue())));
     }
 
@@ -156,7 +155,7 @@ class SimPairsResourceIT {
             .andExpect(jsonPath("$.id").value(simPairs.getId().intValue()))
             .andExpect(jsonPath("$.msisdn").value(DEFAULT_MSISDN))
             .andExpect(jsonPath("$.imsi").value(DEFAULT_IMSI))
-            .andExpect(jsonPath("$.imeiNumber").value(DEFAULT_IMEI_NUMBER.intValue()))
+            .andExpect(jsonPath("$.imeiNumber").value(DEFAULT_IMEI_NUMBER))
             .andExpect(jsonPath("$.sent").value(DEFAULT_SENT.booleanValue()));
     }
 
@@ -349,54 +348,28 @@ class SimPairsResourceIT {
 
     @Test
     @Transactional
-    void getAllSimPairsByImeiNumberIsGreaterThanOrEqualToSomething() throws Exception {
+    void getAllSimPairsByImeiNumberContainsSomething() throws Exception {
         // Initialize the database
         simPairsRepository.saveAndFlush(simPairs);
 
-        // Get all the simPairsList where imeiNumber is greater than or equal to DEFAULT_IMEI_NUMBER
-        defaultSimPairsShouldBeFound("imeiNumber.greaterThanOrEqual=" + DEFAULT_IMEI_NUMBER);
+        // Get all the simPairsList where imeiNumber contains DEFAULT_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.contains=" + DEFAULT_IMEI_NUMBER);
 
-        // Get all the simPairsList where imeiNumber is greater than or equal to UPDATED_IMEI_NUMBER
-        defaultSimPairsShouldNotBeFound("imeiNumber.greaterThanOrEqual=" + UPDATED_IMEI_NUMBER);
+        // Get all the simPairsList where imeiNumber contains UPDATED_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.contains=" + UPDATED_IMEI_NUMBER);
     }
 
     @Test
     @Transactional
-    void getAllSimPairsByImeiNumberIsLessThanOrEqualToSomething() throws Exception {
+    void getAllSimPairsByImeiNumberNotContainsSomething() throws Exception {
         // Initialize the database
         simPairsRepository.saveAndFlush(simPairs);
 
-        // Get all the simPairsList where imeiNumber is less than or equal to DEFAULT_IMEI_NUMBER
-        defaultSimPairsShouldBeFound("imeiNumber.lessThanOrEqual=" + DEFAULT_IMEI_NUMBER);
+        // Get all the simPairsList where imeiNumber does not contain DEFAULT_IMEI_NUMBER
+        defaultSimPairsShouldNotBeFound("imeiNumber.doesNotContain=" + DEFAULT_IMEI_NUMBER);
 
-        // Get all the simPairsList where imeiNumber is less than or equal to SMALLER_IMEI_NUMBER
-        defaultSimPairsShouldNotBeFound("imeiNumber.lessThanOrEqual=" + SMALLER_IMEI_NUMBER);
-    }
-
-    @Test
-    @Transactional
-    void getAllSimPairsByImeiNumberIsLessThanSomething() throws Exception {
-        // Initialize the database
-        simPairsRepository.saveAndFlush(simPairs);
-
-        // Get all the simPairsList where imeiNumber is less than DEFAULT_IMEI_NUMBER
-        defaultSimPairsShouldNotBeFound("imeiNumber.lessThan=" + DEFAULT_IMEI_NUMBER);
-
-        // Get all the simPairsList where imeiNumber is less than UPDATED_IMEI_NUMBER
-        defaultSimPairsShouldBeFound("imeiNumber.lessThan=" + UPDATED_IMEI_NUMBER);
-    }
-
-    @Test
-    @Transactional
-    void getAllSimPairsByImeiNumberIsGreaterThanSomething() throws Exception {
-        // Initialize the database
-        simPairsRepository.saveAndFlush(simPairs);
-
-        // Get all the simPairsList where imeiNumber is greater than DEFAULT_IMEI_NUMBER
-        defaultSimPairsShouldNotBeFound("imeiNumber.greaterThan=" + DEFAULT_IMEI_NUMBER);
-
-        // Get all the simPairsList where imeiNumber is greater than SMALLER_IMEI_NUMBER
-        defaultSimPairsShouldBeFound("imeiNumber.greaterThan=" + SMALLER_IMEI_NUMBER);
+        // Get all the simPairsList where imeiNumber does not contain UPDATED_IMEI_NUMBER
+        defaultSimPairsShouldBeFound("imeiNumber.doesNotContain=" + UPDATED_IMEI_NUMBER);
     }
 
     @Test
@@ -449,7 +422,7 @@ class SimPairsResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(simPairs.getId().intValue())))
             .andExpect(jsonPath("$.[*].msisdn").value(hasItem(DEFAULT_MSISDN)))
             .andExpect(jsonPath("$.[*].imsi").value(hasItem(DEFAULT_IMSI)))
-            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER.intValue())))
+            .andExpect(jsonPath("$.[*].imeiNumber").value(hasItem(DEFAULT_IMEI_NUMBER)))
             .andExpect(jsonPath("$.[*].sent").value(hasItem(DEFAULT_SENT.booleanValue())));
 
         // Check, that the count call also returns 1

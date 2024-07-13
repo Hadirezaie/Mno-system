@@ -41,7 +41,7 @@ public class ImeiCriteria implements Serializable, Criteria {
 
     private LongFilter id;
 
-    private LongFilter imeiNumber;
+    private StringFilter imeiNumber;
 
     private ImeiStatusFilter status;
 
@@ -76,18 +76,18 @@ public class ImeiCriteria implements Serializable, Criteria {
         this.id = id;
     }
 
-    public LongFilter getImeiNumber() {
+    public StringFilter getImeiNumber() {
         return imeiNumber;
     }
 
-    public LongFilter imeiNumber() {
+    public StringFilter imeiNumber() {
         if (imeiNumber == null) {
-            imeiNumber = new LongFilter();
+            imeiNumber = new StringFilter();
         }
         return imeiNumber;
     }
 
-    public void setImeiNumber(LongFilter imeiNumber) {
+    public void setImeiNumber(StringFilter imeiNumber) {
         this.imeiNumber = imeiNumber;
     }
 

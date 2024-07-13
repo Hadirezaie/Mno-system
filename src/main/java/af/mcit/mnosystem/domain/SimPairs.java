@@ -26,7 +26,7 @@ public class SimPairs implements Serializable {
     private String imsi;
 
     @Column(name = "imei_number")
-    private Long imeiNumber;
+    private String imeiNumber;
 
     @Column(name = "sent")
     private Boolean sent;
@@ -72,16 +72,16 @@ public class SimPairs implements Serializable {
         this.imsi = imsi;
     }
 
-    public Long getImeiNumber() {
+    public String getImeiNumber() {
         return this.imeiNumber;
     }
 
-    public SimPairs imeiNumber(Long imeiNumber) {
+    public SimPairs imeiNumber(String imeiNumber) {
         this.setImeiNumber(imeiNumber);
         return this;
     }
 
-    public void setImeiNumber(Long imeiNumber) {
+    public void setImeiNumber(String imeiNumber) {
         this.imeiNumber = imeiNumber;
     }
 
@@ -124,7 +124,7 @@ public class SimPairs implements Serializable {
             "id=" + getId() +
             ", msisdn='" + getMsisdn() + "'" +
             ", imsi='" + getImsi() + "'" +
-            ", imeiNumber=" + getImeiNumber() +
+            ", imeiNumber='" + getImeiNumber() + "'" +
             ", sent='" + getSent() + "'" +
             "}";
     }

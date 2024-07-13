@@ -21,7 +21,7 @@ public class Imei implements Serializable {
     private Long id;
 
     @Column(name = "imei_number")
-    private Long imeiNumber;
+    private String imeiNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -42,16 +42,16 @@ public class Imei implements Serializable {
         this.id = id;
     }
 
-    public Long getImeiNumber() {
+    public String getImeiNumber() {
         return this.imeiNumber;
     }
 
-    public Imei imeiNumber(Long imeiNumber) {
+    public Imei imeiNumber(String imeiNumber) {
         this.setImeiNumber(imeiNumber);
         return this;
     }
 
-    public void setImeiNumber(Long imeiNumber) {
+    public void setImeiNumber(String imeiNumber) {
         this.imeiNumber = imeiNumber;
     }
 
@@ -92,7 +92,7 @@ public class Imei implements Serializable {
     public String toString() {
         return "Imei{" +
             "id=" + getId() +
-            ", imeiNumber=" + getImeiNumber() +
+            ", imeiNumber='" + getImeiNumber() + "'" +
             ", status='" + getStatus() + "'" +
             "}";
     }

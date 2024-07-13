@@ -27,7 +27,7 @@ public class SimPairsCriteria implements Serializable, Criteria {
 
     private StringFilter imsi;
 
-    private LongFilter imeiNumber;
+    private StringFilter imeiNumber;
 
     private BooleanFilter sent;
 
@@ -94,18 +94,18 @@ public class SimPairsCriteria implements Serializable, Criteria {
         this.imsi = imsi;
     }
 
-    public LongFilter getImeiNumber() {
+    public StringFilter getImeiNumber() {
         return imeiNumber;
     }
 
-    public LongFilter imeiNumber() {
+    public StringFilter imeiNumber() {
         if (imeiNumber == null) {
-            imeiNumber = new LongFilter();
+            imeiNumber = new StringFilter();
         }
         return imeiNumber;
     }
 
-    public void setImeiNumber(LongFilter imeiNumber) {
+    public void setImeiNumber(StringFilter imeiNumber) {
         this.imeiNumber = imeiNumber;
     }
 

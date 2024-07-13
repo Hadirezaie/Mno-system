@@ -2,7 +2,7 @@ export interface ISimPairs {
   id?: number;
   msisdn?: string | null;
   imsi?: string | null;
-  imeiNumber?: number | null;
+  imeiNumber?: string | null;
   sent?: boolean | null;
 }
 
