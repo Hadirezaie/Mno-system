@@ -4,6 +4,7 @@ import af.mcit.mnosystem.domain.SimPairs;
 import af.mcit.mnosystem.repository.SimPairsRepository;
 import af.mcit.mnosystem.service.criteria.SimPairsCriteria;
 import af.mcit.mnosystem.service.dto.SimPairsDTO;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -52,6 +53,7 @@ public class SimPairsService {
      */
     public SimPairs save(SimPairs simPairs) {
         log.debug("Request to save SimPairs : {}", simPairs);
+
         return simPairsRepository.save(simPairs);
     }
 
@@ -138,11 +140,17 @@ public class SimPairsService {
         simPairs.forEach(pairs -> {
             try {
                 String token = cirTokenService.getToken();
-                String url = "http://localhost:8080/api/sim-pair";
+                String url = "http://192.168.213.91:8080/api/mno-pairing-queues";
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", "Bearer " + token);
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                HttpEntity<SimPairs> request = new HttpEntity<SimPairs>(pairs, headers);
+                SimPairsDTO simPairsDTO = new SimPairsDTO();
+                simPairsDTO.setDatetime(LocalDate.now());
+                simPairsDTO.setImei(pairs.getImeiNumber());
+                simPairsDTO.setImsi(pairs.getImsi());
+                simPairsDTO.setMsisdn(pairs.getMsisdn());
+
+                HttpEntity<SimPairsDTO> request = new HttpEntity<SimPairsDTO>(simPairsDTO, headers);
                 RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
                 log.info("Call Sim Pairs API: {}", response.getBody());

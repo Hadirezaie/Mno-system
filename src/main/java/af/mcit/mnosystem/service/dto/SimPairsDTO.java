@@ -5,7 +5,9 @@ public class SimPairsDTO {
     private String msisdn;
 
     private String imsi;
-    private Long imei;
+    private String imei;
+
+    private java.time.LocalDate datetime;
 
     public String getMsisdn() {
         return msisdn;
@@ -23,11 +25,19 @@ public class SimPairsDTO {
         this.imsi = imsi;
     }
 
-    public Long getImei() {
+    public String getImei() {
         return imei;
     }
 
-    public void setImei(Long imei) {
+    public void setImei(String imei) {
         this.imei = imei;
+    }
+
+    public java.time.LocalDate getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(java.time.LocalDate datetime) {
+        this.datetime = datetime;
     }
 }

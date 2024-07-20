@@ -35,11 +35,11 @@ public class CIRTokenService {
     private void authenticateToCIRServer() {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String apiUrl = "http://localhost:8080/api/authenticate";
+            String apiUrl = "http://192.168.213.91:8080/api/authenticate";
 
             Map<String, String> params = new HashMap<String, String>();
-            params.put("username", "MTNA");
-            params.put("password", "1234");
+            params.put("username", "admin");
+            params.put("password", "admin");
 
             String json = restTemplate.postForObject(apiUrl, params, String.class);
 

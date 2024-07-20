@@ -2,6 +2,8 @@ package af.mcit.mnosystem.service;
 
 import af.mcit.mnosystem.domain.Imei;
 import af.mcit.mnosystem.repository.ImeiRepository;
+import af.mcit.mnosystem.service.criteria.ImeiCriteria;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tech.jhipster.service.filter.StringFilter;
 
 /**
  * Service Implementation for managing {@link Imei}.
@@ -20,9 +23,11 @@ public class ImeiService {
     private final Logger log = LoggerFactory.getLogger(ImeiService.class);
 
     private final ImeiRepository imeiRepository;
+    private final ImeiQueryService imeiQueryService;
 
-    public ImeiService(ImeiRepository imeiRepository) {
+    public ImeiService(ImeiRepository imeiRepository, ImeiQueryService imeiQueryService) {
         this.imeiRepository = imeiRepository;
+        this.imeiQueryService = imeiQueryService;
     }
 
     /**
@@ -33,7 +38,21 @@ public class ImeiService {
      */
     public Imei save(Imei imei) {
         log.debug("Request to save Imei : {}", imei);
-        return imeiRepository.save(imei);
+
+        ImeiCriteria imeiCriteria = new ImeiCriteria();
+        imeiCriteria.setImeiNumber((StringFilter) new StringFilter().setEquals(imei.getImeiNumber()));
+        List<Imei> imeiOpt = imeiQueryService.findByCriteria(imeiCriteria);
+        Imei savedIme = new Imei();
+        if (imeiOpt.isEmpty()) {
+            savedIme = imeiRepository.save(imei);
+        } else {
+            Imei newImei = new Imei();
+            imei.setId(imeiOpt.get(0).getId());
+            imei.setImeiNumber(imeiOpt.get(0).getImeiNumber());
+            imei.status(imei.getStatus());
+            savedIme = imeiRepository.save(imei);
+        }
+        return savedIme;
     }
 
     /**
